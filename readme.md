@@ -23,7 +23,7 @@ Siga os passos abaixo para configurar o script no seu ambiente:
 Primeiro, clone este repositório na pasta onde você deseja armazenar o script:
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git /mnt/c/users/luciano.leite/Dev/_sync
+git clone https://github.com/luvittor/sync-to-onedrive.git /mnt/c/users/luciano.leite/Dev/_sync
 ```
 
 ### 2. Edite o Script
