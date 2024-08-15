@@ -2,6 +2,12 @@
 
 Este script automatiza a criação de snapshots de projetos de desenvolvimento com Git e os sincroniza com o OneDrive. O script foi projetado para ser executado diariamente às 4h da manhã usando o cron no WSL.
 
+## Motivação
+
+A necessidade de criar este script surgiu devido ao fato de que, durante o desenvolvimento de múltiplos projetos, alguns arquivos e diretórios são ignorados pelo Git (`.gitignore`), mas ainda assim é importante mantê-los sincronizados e seguros.
+
+Além disso, manter a pasta `.git` dentro do OneDrive não é recomendável, pois pode causar corrupção de dados e problemas de desempenho. Para evitar esses problemas, este script foi desenvolvido para criar snapshots dos projetos de desenvolvimento, incluindo os arquivos ignorados pelo Git, sem sincronizar diretamente o diretório `.git` com o OneDrive. Dessa forma, garantimos uma camada extra de segurança e recuperação de dados sem os riscos associados à sincronização direta do repositório Git.
+
 ## Pré-requisitos
 
 - Windows 10/11 com WSL (Windows Subsystem for Linux) instalado.
