@@ -29,11 +29,6 @@ for dir in $(find . -type d -name ".git"); do
         exit 1
     fi
     
-    # Exibe um aviso se houver alterações não comitadas
-    if [[ $(git status --porcelain) ]]; then
-        echo "Aviso: Há alterações não comitadas no repositório $repo_dir." >> "$LOG_FILE"
-    fi
-    
     cd "$PROJECTS_DIR"
 done
 
