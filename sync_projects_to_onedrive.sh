@@ -15,6 +15,10 @@ echo "Sincronização de projetos iniciada..." >> "$LOG_FILE"
 echo "Criando pasta temporária, se não existir..." >> "$LOG_FILE"
 mkdir -p "$TEMP_DIR"
 
+# Criação da pasta temporária dos projetos se não existir
+echo "Criando pasta temporária dos projetos, se não existir..." >> "$LOG_FILE"
+mkdir -p "$TEMP_DIR/Dev"
+
 # Criação da pasta temporária do XAMPP se não existir
 echo "Criando pasta temporária do XAMPP, se não existir..." >> "$LOG_FILE"
 mkdir -p "$TEMP_DIR/xampp"
@@ -38,7 +42,7 @@ done
 
 # Sincroniza o diretório de projetos para um diretório temporário
 echo "Sincronizando o diretório de projetos para a pasta temporária..." >> "$LOG_FILE"
-rsync -a --delete "$PROJECTS_DIR/" "$TEMP_DIR/"
+rsync -a --delete "$PROJECTS_DIR/" "$TEMP_DIR/Dev/"
 
 # Sincroniza o diretório do XAMPP para um diretório temporário
 echo "Sincronizando o diretório do XAMPP para a pasta temporária..." >> "$LOG_FILE"
