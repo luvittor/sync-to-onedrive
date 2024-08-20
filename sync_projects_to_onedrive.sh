@@ -57,10 +57,6 @@ SNAPSHOT_NAME="snapshot_$(date +'%Y%m%d_%H%M%S').tar.gz"
 echo "Criando um novo snapshot: $SNAPSHOT_NAME..." >> "$LOG_FILE"
 tar -czf "$ONEDRIVE_DIR/$SNAPSHOT_NAME" -C "$TEMP_DIR" .
 
-# Limpa o diretório temporário
-echo "Limpando o diretório temporário..." >> "$LOG_FILE"
-rm -rf "$TEMP_DIR/*"
-
 # Finalização do log
 echo "Snapshot criado e sincronizado para $ONEDRIVE_DIR/$SNAPSHOT_NAME" >> "$LOG_FILE"
 echo "Fim da execução: $(date)" >> "$LOG_FILE"
