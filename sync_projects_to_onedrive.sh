@@ -1,11 +1,19 @@
 #!/bin/bash
 
-# Configurações
-PROJECTS_DIR="/mnt/c/users/luciano.leite/Dev"
-TEMP_DIR="/mnt/c/users/luciano.leite/Temp"
-ONEDRIVE_DIR="/mnt/c/users/luciano.leite/OneDrive - Alloha Fibra/Dev"
-LOG_DIR="/mnt/c/users/luciano.leite/Dev/_sync"
-LOG_FILE="$LOG_DIR/sync_log_$(date +'%Y%m%d_%H%M%S').log"
+# Determina o diretório onde o script está localizado
+SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+
+# Carrega o arquivo de configuração do mesmo diretório onde o script está localizado
+source "$SCRIPT_DIR/config.conf"
+
+# Verifica se o arquivo de configuração foi carregado
+if [ -z "$PROJECTS_DIR" ]; then
+    echo "Erro: Não foi possível carregar o arquivo de configuração. Certifique-se de que o config.conf está no mesmo diretório que o script."
+    exit 1
+fi
+
+# Defina o arquivo de log com base no SCRIPT_DIR
+LOG_FILE="$SCRIPT_DIR/sync_log_$(date +'%Y%m%d_%H%M%S').log"
 
 # Início do log
 echo "Início da execução: $(date)" > "$LOG_FILE"
@@ -50,12 +58,12 @@ rsync -a --delete "/mnt/c/xampp/" "$TEMP_DIR/xampp/"
 
 # Remove o último snapshot do OneDrive
 echo "Removendo o último snapshot do OneDrive..." >> "$LOG_FILE"
-find "$ONEDRIVE_DIR" -type f -name "snapshot_*.tar.gz" -exec rm -f {} +
+find "$ONEDRIVE_DIR" -type f -name "snapshot_*.zip" -exec rm -f {} +
 
-# Cria um novo snapshot com a data e hora atuais
-SNAPSHOT_NAME="snapshot_$(date +'%Y%m%d_%H%M%S').tar.gz"
-echo "Criando um novo snapshot: $SNAPSHOT_NAME..." >> "$LOG_FILE"
-tar -czf "$ONEDRIVE_DIR/$SNAPSHOT_NAME" -C "$TEMP_DIR" .
+# Cria um novo snapshot com a data e hora atuais e protege com senha
+SNAPSHOT_NAME="snapshot_$(date +'%Y%m%d_%H%M%S').zip"
+echo "Criando um novo snapshot com senha: $SNAPSHOT_NAME..." >> "$LOG_FILE"
+zip -r -P "$PASSWORD" "$ONEDRIVE_DIR/$SNAPSHOT_NAME" "$TEMP_DIR"
 
 # Finalização do log
 echo "Snapshot criado e sincronizado para $ONEDRIVE_DIR/$SNAPSHOT_NAME" >> "$LOG_FILE"

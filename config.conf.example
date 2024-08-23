@@ -1,0 +1,6 @@
+# config.conf
+
+PROJECTS_DIR="/mnt/c/users/seu.nome/projetos"
+TEMP_DIR="/mnt/c/users/seu.nome/temp"
+ONEDRIVE_DIR="/mnt/c/users/seu.nome/OneDrive/projetos"
+PASSWORD="sua-senha-para-criptografar-o-zip"
