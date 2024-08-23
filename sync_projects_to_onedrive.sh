@@ -23,13 +23,18 @@ echo "Sincronização de projetos iniciada..." >> "$LOG_FILE"
 echo "Criando pasta temporária, se não existir..." >> "$LOG_FILE"
 mkdir -p "$TEMP_DIR"
 
+# Criação das subpastas temporárias se não existirem
+echo "Criando subpastas temporárias 'projects' e 'archive', se não existirem..." >> "$LOG_FILE"
+mkdir -p "$TEMP_DIR/projects"
+mkdir -p "$TEMP_DIR/archive"
+
 # Criação da pasta temporária dos projetos se não existir
 echo "Criando pasta temporária dos projetos, se não existir..." >> "$LOG_FILE"
-mkdir -p "$TEMP_DIR/Dev"
+mkdir -p "$TEMP_DIR/projects/Dev"
 
 # Criação da pasta temporária do XAMPP se não existir
 echo "Criando pasta temporária do XAMPP, se não existir..." >> "$LOG_FILE"
-mkdir -p "$TEMP_DIR/xampp"
+mkdir -p "$TEMP_DIR/projects/xampp"
 
 # Verificação de status do Git em todos os subdiretórios
 echo "Verificando status dos repositórios Git em $PROJECTS_DIR..." >> "$LOG_FILE"
@@ -48,23 +53,35 @@ for dir in $(find . -type d -name ".git"); do
     cd "$PROJECTS_DIR"
 done
 
-# Sincroniza o diretório de projetos para um diretório temporário
-echo "Sincronizando o diretório de projetos para a pasta temporária..." >> "$LOG_FILE"
-rsync -a --delete "$PROJECTS_DIR/" "$TEMP_DIR/Dev/"
+# Sincroniza o diretório de projetos para a subpasta temporária 'projects/Dev'
+echo "Sincronizando o diretório de projetos Dev para a subpasta temporária 'projects'..." >> "$LOG_FILE"
+rsync -a --delete "$PROJECTS_DIR/" "$TEMP_DIR/projects/Dev/"
 
-# Sincroniza o diretório do XAMPP para um diretório temporário
-echo "Sincronizando o diretório do XAMPP para a pasta temporária..." >> "$LOG_FILE"
-rsync -a --delete "/mnt/c/xampp/" "$TEMP_DIR/xampp/"
+# Sincroniza o diretório do XAMPP para a subpasta temporária 'projects/xampp'
+echo "Sincronizando o diretório do XAMPP para a subpasta temporária 'projects'..." >> "$LOG_FILE"
+rsync -a --delete "/mnt/c/xampp/" "$TEMP_DIR/projects/xampp/"
 
 # Remove o último snapshot do OneDrive
 echo "Removendo o último snapshot do OneDrive..." >> "$LOG_FILE"
-find "$ONEDRIVE_DIR" -type f -name "snapshot_*.zip" -exec rm -f {} +
+find "$ONEDRIVE_DIR" -type f -name "snapshot_*.tar.gz.gpg" -exec rm -f {} +
 
-# Cria um novo snapshot com a data e hora atuais e protege com senha
-SNAPSHOT_NAME="snapshot_$(date +'%Y%m%d_%H%M%S').zip"
-echo "Criando um novo snapshot com senha: $SNAPSHOT_NAME..." >> "$LOG_FILE"
-zip -r -P "$PASSWORD" "$ONEDRIVE_DIR/$SNAPSHOT_NAME" "$TEMP_DIR"
+# Cria um novo snapshot com a data e hora atuais e armazena na subpasta 'archive'
+SNAPSHOT_NAME="snapshot_$(date +'%Y%m%d_%H%M%S').tar.gz"
+echo "Criando um novo snapshot: $SNAPSHOT_NAME..." >> "$LOG_FILE"
+tar -czf "$TEMP_DIR/archive/$SNAPSHOT_NAME" -C "$TEMP_DIR/projects" .
+
+# Criptografa o snapshot e armazena na subpasta 'archive'
+echo "Criptografando o snapshot..." >> "$LOG_FILE"
+gpg --batch --yes --passphrase "$PASSWORD" --symmetric --cipher-algo AES256 -o "$TEMP_DIR/archive/$SNAPSHOT_NAME.gpg" "$TEMP_DIR/archive/$SNAPSHOT_NAME"
+
+# Move o arquivo criptografado para o OneDrive
+echo "Movendo o arquivo criptografado para o OneDrive..." >> "$LOG_FILE"
+mv "$TEMP_DIR/archive/$SNAPSHOT_NAME.gpg" "$ONEDRIVE_DIR/"
+
+# Remove o arquivo compactado não criptografado
+echo "Removendo o arquivo compactado não criptografado..." >> "$LOG_FILE"
+rm -f "$TEMP_DIR/archive/$SNAPSHOT_NAME"
 
 # Finalização do log
-echo "Snapshot criado e sincronizado para $ONEDRIVE_DIR/$SNAPSHOT_NAME" >> "$LOG_FILE"
+echo "Snapshot criado, criptografado, e movido para $ONEDRIVE_DIR/$SNAPSHOT_NAME.gpg" >> "$LOG_FILE"
 echo "Fim da execução: $(date)" >> "$LOG_FILE"
