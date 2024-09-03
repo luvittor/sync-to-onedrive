@@ -80,10 +80,10 @@ Abra o crontab para configuração:
 crontab -e
 ```
 
-Adicione a seguinte linha ao final do arquivo para agendar a execução do script de sincronização diariamente às 4h da manhã:
+Adicione a seguinte linha ao final do arquivo para agendar a execução do script de sincronização de terça a sábado (para não rodar desnecessariamente depois dos dias que não trabalho) às 4h da manhã:
 
 ```bash
-0 4 * * * /mnt/c/users/luciano.leite/Dev/_sync/sync_projects_to_onedrive.sh >> /mnt/c/users/luciano.leite/Dev/_sync/cron_output.log 2>&1
+0 4 * * 2-6 /mnt/c/users/luciano.leite/Dev/_sync/sync_projects_to_onedrive.sh >> /mnt/c/users/luciano.leite/Dev/_sync/cron_output.log 2>&1
 ```
 
 Salve e saia do editor:
