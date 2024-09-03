@@ -13,7 +13,7 @@ if [ -z "$PROJECTS_DIR" ]; then
 fi
 
 # Defina o arquivo de log com base no SCRIPT_DIR
-LOG_FILE="$SCRIPT_DIR/sync_log_$(date +'%Y%m%d_%H%M%S').log"
+LOG_FILE="$SCRIPT_DIR/logs/sync_log_$(date +'%Y%m%d_%H%M%S').log"
 
 # Início do log
 echo "Início da execução: $(date)" > "$LOG_FILE"
